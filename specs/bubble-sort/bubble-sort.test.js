@@ -10,20 +10,20 @@
   index's. Continue looping through until all values are in ascending order
 */
 
-function bubbleSort(numberArray) {
+function bubbleSort(numbers) {
   let didSwap = false;
   do {
     didSwap = false;
-    for (let i = 0; i < numberArray.length; i++) {
-      if (numberArray[i] > numberArray[i + 1]) {
-        const temp = numberArray[i];
-        numberArray[i] = numberArray[i + 1];
-        numberArray[i + 1] = temp;
+    for (let i = 0; i < numbers.length - 1; i++) {
+      if (numbers[i] > numbers[i + 1]) {
+        const temp = numbers[i];
+        numbers[i] = numbers[i + 1];
+        numbers[i + 1] = temp;
         didSwap = true;
       }
     }
   } while (didSwap);
-  return numberArray;
+  return numbers;
 }
 
 // unit tests

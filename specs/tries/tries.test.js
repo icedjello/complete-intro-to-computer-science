@@ -13,11 +13,55 @@ const { CITY_NAMES } = require("./cities.js");
 const _ = require("lodash"); // needed for unit tests
 
 class Node {
-  // you don't have to use this data structure, this is just how I did it
-  // you'll almost definitely need more methods than this and a constructor
-  // and instance variables
+  constructor(string) {
+    this.children = [];
+    this.terminus = false;
+    this.value = string[0];
+    if (string.length > 1) {
+      this.children.push(new Node(string.substring(1)));
+    } else {
+      this.terminus = true;
+    }
+  }
+  add(string) {
+    const value = string[0];
+    const next = string.substring(1);
+    for (let i = 0; i < this.children.length; i++) {
+      const child = this.children[i];
+      if (child.value === value) {
+        if (next) {
+          child.add(next);
+        } else {
+          child.terminus = true;
+        }
+        return;
+      }
+    }
+    this.children.push(new Node(string));
+  }
+  _complete(search, built, suggestions) {
+    if (suggestions.length >= 3 || (search && search[0] !== this.value)) {
+      return suggestions;
+    }
+
+    if (this.terminus) {
+      suggestions.push(built + this.value);
+    }
+
+    for (const child of this.children) {
+      child._complete(search.substring(1), built + this.value, suggestions);
+    }
+    return suggestions;
+  }
+
   complete(string) {
-    return [];
+    let completions = [];
+
+    for (let i = 0; i < this.children.length; i++) {
+      const child = this.children[i];
+      completions = completions.concat(child._complete(string, "", []));
+    }
+    return completions;
   }
 }
 
@@ -25,6 +69,9 @@ const createTrie = (words) => {
   // you do not have to do it this way; this is just how I did it
   const root = new Node("");
 
+  for (const word of words) {
+    root.add(word.toLowerCase());
+  }
   // more code should go here
 
   return root;
@@ -32,7 +79,7 @@ const createTrie = (words) => {
 
 // unit tests
 // do not modify the below code
-describe.skip("tries", function () {
+describe("tries", function () {
   test("dataset of 10 – san", () => {
     const root = createTrie(CITY_NAMES.slice(0, 10));
     const completions = root.complete("san");
@@ -43,7 +90,7 @@ describe.skip("tries", function () {
     ).toBe(3);
   });
 
-  test("dataset of 10 – philadelph", () => {
+  test("dataset of 10 - philadelph", () => {
     const root = createTrie(CITY_NAMES.slice(0, 10));
     const completions = root.complete("philadelph");
     expect(completions.length).toBe(1);
@@ -69,7 +116,7 @@ describe.skip("tries", function () {
         "new orleans",
         "new haven",
         "newark",
-        "newport news"
+        "newport news",
       ]).length
     ).toBe(3);
   });
@@ -127,13 +174,13 @@ describe.skip("tries", function () {
         "santee",
         "sandy",
         "sandy springs",
-        "sanford"
+        "sanford",
       ]).length
     ).toBe(3);
   });
 });
 
-describe.skip("edge cases", () => {
+describe("edge cases", () => {
   test("handle whole words – seattle", () => {
     const root = createTrie(CITY_NAMES.slice(0, 30));
     const completions = root.complete("seattle");

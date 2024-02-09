@@ -30,52 +30,61 @@ class LinkedList {
     this.length = 0;
   }
   push(value) {
-    const node = new Node(value);
+    const newNode = new Node(value);
     this.length++;
     if (!this.head) {
-      this.head = node;
+      this.head = this.tail = newNode;
     } else {
-      this.tail.next = node;
+      this.tail.next = newNode;
+      this.tail = newNode;
     }
-    this.tail = node;
   }
   pop() {
-    return this.delete(this.length - 1);
+    if (!this.length === 0) {
+      throw "nothing to pop";
+    } else {
+      const temp = this.tail.value;
+      this.length--;
+      let newTail = this.head;
+      for (let i = 1; i < this.length; i++) {
+        newTail = newTail.next;
+      }
+      this.tail = newTail;
+      this.tail.next = null;
+      return temp;
+    }
   }
   _find(index) {
-    if (index >= this.length) return null;
+    if (index >= this.length) throw "index too big";
+
     let current = this.head;
     for (let i = 0; i < index; i++) {
       current = current.next;
     }
-
     return current;
   }
   get(index) {
-    const node = this._find(index);
-    if (!node) return void 0;
-    return node.value;
+    return this._find(index).value;
   }
   delete(index) {
-    if (index === 0) {
-      const head = this.head;
-      if (head) {
-        this.head = head.next;
-      } else {
-        this.head = null;
-        this.tail = null;
-      }
-      this.length--;
-      return head.value;
+    if (this.length === 0) {
+      throw "Nothing to delete";
     }
-
-    const node = this._find(index - 1);
-    const excise = node.next;
-    if (!excise) return null;
-    node.next = excise.next;
-    if (!node.next) this.tail = node.next;
     this.length--;
-    return excise.value;
+    let temp;
+    if (index === 0) {
+      temp = this.head;
+      if (this.head.next) {
+        this.head = this.head.next;
+      } else {
+        this.head = this.tail = null;
+      }
+    } else {
+      const nodeBefore = this._find(index - 1);
+      temp = nodeBefore.next;
+      nodeBefore.next = temp.next;
+    }
+    return temp.value;
   }
 }
 
@@ -132,7 +141,8 @@ describe("LinkedList", function () {
 
   test("delete", () => {
     abcRange(26).map((character) => list.push(character));
-    list.delete(13);
+    expect(list.get(13)).toEqual("n");
+    expect(list.delete(13)).toEqual("n");
     expect(list.length).toEqual(25);
     expect(list.get(12)).toEqual("m");
     expect(list.get(13)).toEqual("o");

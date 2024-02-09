@@ -15,19 +15,82 @@ left  - Node/object - the left node which itself may be another tree
 right - Node/object - the right node which itself may be another tree
 
 */
-
-class Tree {
-  // code goes here
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.left = this.right = null;
+  }
 }
 
-// you might consider using a Node class too
-// class Node {
-//   // code maybe goes here
-// }
+class Tree {
+  constructor() {
+    this.root = null;
+  }
+
+  // add(value) {
+  //   if (this.root === null) {
+  //     this.root = new Node(value);
+  //     return this;
+  //   }
+
+  //   let parentNode = this.root;
+
+  //   while (true) {
+  //     if (value < parentNode.value) {
+  //       if (parentNode.left) {
+  //         parentNode = parentNode.left;
+  //         continue;
+  //       } else {
+  //         parentNode.left = new Node(value);
+  //         break;
+  //       }
+  //     } else {
+  //       if (parentNode.right) {
+  //         parentNode = parentNode.right;
+  //         continue;
+  //       } else {
+  //         parentNode.right = new Node(value);
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   return this;
+  // }
+
+  add(value) {
+    return this._recursiveAdd(value, this.root);
+  }
+
+  _recursiveAdd(value, parent) {
+    if (this.root === null) {
+      this.root = new Node(value);
+      return this.root;
+    }
+
+    if (value >= parent.value) {
+      if (parent.right) {
+        return this._recursiveAdd(value, parent.right);
+      } else {
+        parent.right = new Node(value);
+      }
+    } else {
+      if (parent.left) {
+        return this._recursiveAdd(value, parent.left);
+      } else {
+        parent.left = new Node(value);
+      }
+    }
+    return this;
+  }
+
+  toObject() {
+    return this.root;
+  }
+}
 
 // unit tests
 // do not modify the below code
-describe.skip("Binary Search Tree", function () {
+describe("Binary Search Tree", function () {
   it("creates a correct tree", () => {
     const nums = [3, 7, 4, 6, 5, 1, 10, 2, 9, 8];
     const tree = new Tree();

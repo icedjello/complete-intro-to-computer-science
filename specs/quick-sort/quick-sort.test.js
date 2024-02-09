@@ -12,13 +12,25 @@
 
 */
 
-function quickSort(nums) {
-  // code goes here
+function quickSort(numbers) {
+  const length = numbers.length;
+
+  if (length <= 1) return numbers;
+
+  const pivot = numbers[length - 1];
+  const left = [];
+  const right = [];
+
+  for (let i = 0; i < length - 1; i++) {
+    numbers[i] < pivot ? left.push(numbers[i]) : right.push(numbers[i]);
+  }
+
+  return [...quickSort(left), pivot, ...quickSort(right)];
 }
 
 // unit tests
 // do not modify the below code
-test.skip("quickSort", function () {
+test("quickSort", function () {
   const input = [10, 8, 2, 1, 6, 3, 9, 4, 7, 5];
   const answer = quickSort(input);
 

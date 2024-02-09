@@ -11,9 +11,30 @@
 
 function nestedAdd(array) {
   // write code here
+  let result = 0;
+  // // try 1
+  // for (el of array) {
+  // if (el.length) {
+  //   result += nestedAdd(el);
+  //   continue;
+  // }
+  // result += el;
+  // }
+
+  // // try 2
+  // for (el of array) {
+  //   result += el.length ? nestedAdd(el) : el;
+  // }
+
+  //try 3
+  array.forEach((el) => {
+    result += Array.isArray(el) ? nestedAdd(el) : el;
+  });
+
+  return result;
 }
 
-test.skip("nested arrays addition", () => {
+test("nested arrays addition", () => {
   expect(nestedAdd([1, 2, 3])).toEqual(6);
   expect(nestedAdd([1, [2], 3])).toEqual(6);
   expect(nestedAdd([[[[[[[[[5]]]]]]]]])).toEqual(5);
